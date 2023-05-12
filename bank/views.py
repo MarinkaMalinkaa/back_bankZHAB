@@ -10,6 +10,44 @@ import redis
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 import uuid
+from django.shortcuts import render
+from bank.grpc_client import MyStub
+from django.http import HttpResponse
+from django.http import JsonResponse
+from bank.my_proto_pb2 import MyRequest
+from bank.my_proto_pb2_grpc import MyServiceStub
+import grpc
+
+
+def my_view(request):
+    # Создаем объект запроса
+    my_request = MyRequest(
+        id_card=1,
+        number_card=1234567890,
+        cvc=123,
+        pin=456,
+        contract_id=789
+    )
+
+    # Создаем объект клиента
+    channel = grpc.insecure_channel('localhost:50051')
+    my_stub = MyServiceStub(channel)
+
+    # Отправляем запрос и получаем ответ
+    response = my_stub.MyMethod(my_request)
+
+    # Обрабатываем ответ
+    my_response = {
+        'id_card': response.id_card,
+        'number_card': response.number_card,
+        'cvc': response.cvc,
+        'pin': response.pin,
+        'contract_id': response.contract_id,
+    }
+
+    # Возвращаем ответ в виде JSON
+    return JsonResponse(my_response)
+   # return render(request, './my_template.html', context)
 
 
 session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
@@ -60,31 +98,29 @@ class StatusViewSet(viewsets.ModelViewSet):
     serializer_class = StatusSerializer
 
 
-def GetRandomCard():
+def GetRandomCard(request):
     random_num_card = randint(2023000000000000, 2023999999999999)
 
     uniqe_confirm = Card.objects.filter(number_card=random_num_card)
 
     while uniqe_confirm:
-        random_num = randint(2023000000000000, 2023999999999999)
+        random_num_card = randint(2023000000000000, 2023999999999999)
         if not Card.objects.filter(number_card=random_num_card):
             break
-    print('card_num = ', random_num_card)
+    return HttpResponse("card_num = {}".format(random_num_card))
 
-def GetRandomAccount():
+
+def GetRandomAccount(request):
     random_num_account = randint(20230000000000000000, 20239999999999999999)
 
-    uniqe_confirm = Card.objects.filter(number_card=random_num_account)
+    uniqe_confirm = Account.objects.filter(account_num=random_num_account)
 
     while uniqe_confirm:
         random_num = randint(20230000000000000000, 20239999999999999999)
-        if not Card.objects.filter(number_card=random_num_account):
+        if not Account.objects.filter(account_num=random_num_account):
             break
-    print('account_num = ', random_num_account)
+    return HttpResponse('account_num = {}'.format(random_num_account))
 
-
-GetRandomCard()
-GetRandomAccount()
 
 def auth_view(request):
     username = request.POST["username"]  # допустим передали username и password
