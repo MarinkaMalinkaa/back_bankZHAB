@@ -34,25 +34,27 @@ def my_view(request):
         contract_id=int(contract_id)
     )
 
-    # Создаем объект клиента
-    channel = grpc.insecure_channel('localhost:50051')
-    my_stub = MyServiceStub(channel)
-
-    # Отправляем запрос и получаем ответ
-    response = my_stub.MyMethod(my_request)
-
-    # Обрабатываем ответ
-    my_response = {
-        'id_card': response.id_card,
-        'number_card': response.number_card,
-        'cvc': response.cvc,
-        'pin': response.pin,
-        'contract_id': response.contract_id,
-    }
-
-    # Возвращаем ответ в виде JSON
-    return JsonResponse(my_response)
-   # return render(request, './my_template.html', context)
+    try:
+        # Создаем объект клиента
+        channel = grpc.insecure_channel('localhost:50051')
+        my_stub = MyServiceStub(channel)
+        response = my_stub.MyMethod(my_request)
+        # Обрабатываем ответ
+        my_response = {
+            'id_card': response.id_card,
+            'number_card': response.number_card,
+            'cvc': response.cvc,
+            'pin': response.pin,
+            'contract_id': response.contract_id,
+        }
+        # Возвращаем ответ в виде JSON
+        return JsonResponse(my_response)
+    except grpc.RpcError as e:
+        # Обрабатываем ошибку
+        if e.code() == grpc.StatusCode.UNAVAILABLE:
+            return JsonResponse({'error': 'Сервер недоступен'})
+        else:
+            return JsonResponse({'error': str(e)})
 
 
 session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
