@@ -20,13 +20,18 @@ import grpc
 
 
 def my_view(request):
-    # Создаем объект запроса
+    id_card = request.GET.get('id_card')
+    number_card = request.GET.get('number_card')
+    cvc = request.GET.get('cvc')
+    pin = request.GET.get('pin')
+    contract_id = request.GET.get('contract_id')
+    # Создаем объект запроса и заполняем данными
     my_request = MyRequest(
-        id_card=1,
-        number_card=1234567890,
-        cvc=123,
-        pin=456,
-        contract_id=789
+        id_card=int(id_card),
+        number_card=int(number_card),
+        cvc=int(cvc),
+        pin=int(pin),
+        contract_id=int(contract_id)
     )
 
     # Создаем объект клиента
