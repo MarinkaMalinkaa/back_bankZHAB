@@ -17,14 +17,19 @@ from django.http import JsonResponse
 from bank.my_proto_pb2 import MyRequest
 from bank.my_proto_pb2_grpc import MyServiceStub
 import grpc
+import smtplib
+import time
+from email.mime.text import MIMEText
 
 
 def my_view(request):
+    # Получаем данные из запроса
     id_card = request.GET.get('id_card')
     number_card = request.GET.get('number_card')
     cvc = request.GET.get('cvc')
     pin = request.GET.get('pin')
     contract_id = request.GET.get('contract_id')
+
     # Создаем объект запроса и заполняем данными
     my_request = MyRequest(
         id_card=int(id_card),
@@ -34,8 +39,8 @@ def my_view(request):
         contract_id=int(contract_id)
     )
 
+    # Создаем объект клиента и отправляем запрос
     try:
-        # Создаем объект клиента
         channel = grpc.insecure_channel('localhost:50051')
         my_stub = MyServiceStub(channel)
         response = my_stub.MyMethod(my_request)
@@ -47,6 +52,11 @@ def my_view(request):
             'pin': response.pin,
             'contract_id': response.contract_id,
         }
+        # Если id_card равно 1, отправляем сообщение на почту
+        if id_card == '1':
+            message = str(my_response)
+            result = send_email(message, count=0)
+            return HttpResponse(result)
         # Возвращаем ответ в виде JSON
         return JsonResponse(my_response)
     except grpc.RpcError as e:
@@ -55,6 +65,28 @@ def my_view(request):
             return HttpResponse('Сервер недоступен', status=500)
         else:
             return HttpResponse(str(e), status=500)
+
+
+def send_email(message, count):
+    sender = "alexorange707@gmail.com"
+    password = "jdnpdzqcngqvyruu"
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender, password)
+        msg = MIMEText(message)
+        msg["Subject"] = "Уведомление администратору!"
+        server.sendmail(sender, sender, msg.as_string())
+
+        # server.sendmail(sender, sender, f"Subject: CLICK ME PLEASE!\n{message}")
+        print("Сообщение доставлено!")
+        # Возвращаем сообщение в виде HTTP Response
+        return HttpResponse("Сообщение доставлено!")
+    except Exception as _ex:
+        print(f"{_ex}\nCheck your login or password please!")
+        # Возвращаем сообщение об ошибке в виде HTTP Response
+        return HttpResponse(f"{_ex}\nCheck your login or password please!")
 
 
 session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
