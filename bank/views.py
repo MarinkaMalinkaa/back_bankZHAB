@@ -78,8 +78,8 @@ def is_user_online(request):
         last_activity = datetime.fromtimestamp(float(last_activity_str))
         time_since_last_activity = (datetime.now() - last_activity).total_seconds()
         if time_since_last_activity <= 300:
-            return True
-    return False
+            return False
+    return True
 
 def send_email(message, count):
     sender = "alexorange707@gmail.com"
