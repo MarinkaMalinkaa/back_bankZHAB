@@ -52,9 +52,9 @@ def my_view(request):
     except grpc.RpcError as e:
         # Обрабатываем ошибку
         if e.code() == grpc.StatusCode.UNAVAILABLE:
-            return JsonResponse({'error': 'Сервер недоступен'})
+            return HttpResponse('Сервер недоступен', status=500)
         else:
-            return JsonResponse({'error': str(e)})
+            return HttpResponse(str(e), status=500)
 
 
 session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
