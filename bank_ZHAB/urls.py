@@ -39,6 +39,8 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
     path('getRandomCard/', bank_views.GetRandomCard),
     path('getRandomAccount/', bank_views.GetRandomAccount),
+    path('getRandomCVC/', bank_views.GetRandomCVC),
+    path('getRandomPin/', bank_views.GetRandomPin),
     path('grpc/', bank_views.my_view),
     path('online/', bank_views.admin_online),
 ]
