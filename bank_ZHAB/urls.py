@@ -40,4 +40,5 @@ urlpatterns = [
     path('getRandomCard/', bank_views.GetRandomCard),
     path('getRandomAccount/', bank_views.GetRandomAccount),
     path('grpc/', bank_views.my_view),
+    path('online/', bank_views.admin_online),
 ]

@@ -20,6 +20,7 @@ import grpc
 import smtplib
 import time
 from email.mime.text import MIMEText
+from datetime import datetime
 
 
 def my_view(request):
@@ -52,8 +53,9 @@ def my_view(request):
             'pin': response.pin,
             'contract_id': response.contract_id,
         }
-        # Если id_card равно 1, отправляем сообщение на почту
-        if id_card == '1':
+        user_online = is_user_online(request)
+
+        if user_online:
             message = str(my_response)
             result = send_email(message, count=0)
             return HttpResponse(result)
@@ -66,6 +68,18 @@ def my_view(request):
         else:
             return HttpResponse(str(e), status=500)
 
+def admin_online(request):
+    request.session['last_activity'] = datetime.now().timestamp()
+    return HttpResponse('Обновлено')
+
+def is_user_online(request):
+    last_activity_str = request.session.get('last_activity')
+    if last_activity_str:
+        last_activity = datetime.fromtimestamp(float(last_activity_str))
+        time_since_last_activity = (datetime.now() - last_activity).total_seconds()
+        if time_since_last_activity <= 300:
+            return True
+    return False
 
 def send_email(message, count):
     sender = "alexorange707@gmail.com"
