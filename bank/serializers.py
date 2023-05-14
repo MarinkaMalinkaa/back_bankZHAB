@@ -25,7 +25,7 @@ class AccountSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Account
         # Поля, которые мы сериализуем
-        fields = ["pk",  "authuser_id", "account_num", "balance"]
+        fields = ["pk",  "authuser", "account_num", "balance"]
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class CardSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Card
         # Поля, которые мы сериализуем
-        fields = ["pk",  "number_card", "cvc", "pin", "contract_id"]
+        fields = ["pk",  "number_card", "cvc", "pin", "contract"]
 
 
 class ContractSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class ContractSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Contract
         # Поля, которые мы сериализуем
-        fields = ["pk",  "status_id", "account_id", "auth_user_id"]
+        fields = ["pk",  "status", "account", "auth_user"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Transaction
         # Поля, которые мы сериализуем
-        fields = ["pk",  "sum_transaction", "account1_id", "account2_id"]
+        fields = ["pk",  "sum_transaction", "account1", "account2"]
 
 
 class StatusSerializer(serializers.ModelSerializer):

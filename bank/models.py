@@ -2,19 +2,6 @@ from django.db import models
 
 # Create your models here.
 
-
-class Account(models.Model):
-    authuser = models.ForeignKey('AuthUser', models.DO_NOTHING, blank=True, null=True)
-    account_num = models.CharField(max_length=20)
-    balance = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'account'
-
-
-
-
 class AuthUser(models.Model):
     password = models.CharField(max_length=128)
     last_login = models.DateTimeField(blank=True, null=True)
@@ -33,6 +20,15 @@ class AuthUser(models.Model):
         db_table = 'auth_user'
 
 
+class Account(models.Model):
+    authuser = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+    account_num = models.CharField(max_length=20)
+    balance = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'account'
+
 
 class Card(models.Model):
     number_card = models.CharField(max_length=16, blank=True, null=True)
@@ -45,25 +41,22 @@ class Card(models.Model):
         db_table = 'card'
 
 
-class Contract(models.Model):
-    status = models.ForeignKey('Status', models.DO_NOTHING, blank=True, null=True)
-    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
-    auth_user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = True
-        db_table = 'contract'
-
-
-
-
-
 class Status(models.Model):
     flag = models.CharField(max_length=30, blank=True, null=True)
 
     class Meta:
         managed = True
         db_table = 'status'
+
+
+class Contract(models.Model):
+    status = models.ForeignKey(Status, models.DO_NOTHING, blank=True, null=True)
+    account = models.ForeignKey(Account, models.DO_NOTHING, blank=True, null=True)
+    auth_user = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'contract'
 
 
 class Transaction(models.Model):
