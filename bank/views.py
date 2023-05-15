@@ -1,8 +1,7 @@
 from random import randint
 
 from rest_framework import viewsets
-from bank.serializers import UserSerializer, UserFilter, AccountSerializer, CardSerializer, ContractSerializer, \
-    TransactionSerializer, StatusSerializer
+from bank.serializers import UserSerializer, UserFilter, AccountSerializer, CardSerializer, ContractSerializer, TransactionSerializer, StatusSerializer, AccountFilter, ContractFilter
 from bank.models import AuthUser, Account, Card, Contract, Transaction, Status
 from django_filters.rest_framework import DjangoFilterBackend
 from django.conf import settings
@@ -121,6 +120,9 @@ class AccountViewSet(viewsets.ModelViewSet):
     # queryset всех пользователей для фильтрации по дате последнего изменения
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AccountFilter
+    search_fields = ['^authuser']
 
 
 class CardViewSet(viewsets.ModelViewSet):
@@ -135,6 +137,9 @@ class ContractViewSet(viewsets.ModelViewSet):
     # queryset всех пользователей для фильтрации по дате последнего изменения
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ContractFilter
+    search_fields = ['^status', '^auth_user']
 
 
 class TransactionViewSet(viewsets.ModelViewSet):

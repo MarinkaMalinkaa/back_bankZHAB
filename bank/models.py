@@ -30,15 +30,7 @@ class Account(models.Model):
         db_table = 'account'
 
 
-class Card(models.Model):
-    number_card = models.CharField(max_length=16, blank=True, null=True)
-    cvc = models.IntegerField(blank=True, null=True)
-    pin = models.IntegerField(blank=True, null=True)
-    contract = models.ForeignKey('Contract', models.DO_NOTHING, blank=True, null=True)
 
-    class Meta:
-        managed = True
-        db_table = 'card'
 
 
 class Status(models.Model):
@@ -67,3 +59,13 @@ class Transaction(models.Model):
     class Meta:
         managed = True
         db_table = 'transaction'
+
+class Card(models.Model):
+    number_card = models.CharField(max_length=16, blank=True, null=True)
+    cvc = models.IntegerField(blank=True, null=True)
+    pin = models.IntegerField(blank=True, null=True)
+    contract = models.ForeignKey(Contract, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'card'
