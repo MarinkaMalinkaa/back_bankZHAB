@@ -177,7 +177,7 @@ def GetRandomAccount(request):
         random_num_account = randint(20230000000000000000, 20239999999999999999)
         if not Account.objects.filter(account_num=random_num_account):
             break
-    return HttpResponse('account_num = {}'.format(random_num_account))
+    return HttpResponse(format(random_num_account))
 
 
 def GetRandomCVC(request):

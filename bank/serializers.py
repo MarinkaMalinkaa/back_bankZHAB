@@ -32,9 +32,10 @@ class AccountFilter(filters.FilterSet):
     pass
     search = filters.NumberFilter(field_name='authuser')
 
-    model = Account
-    # Поля, которые мы сериализуем
-    fields = ["pk", "authuser", "account_num", "balance"]
+    class Meta:
+        model = Account
+        # Поля, которые мы сериализуем
+        fields = ["authuser"]
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -58,8 +59,9 @@ class ContractFilter(filters.FilterSet):
     search = filters.NumberFilter(field_name='status')
     search = filters.NumberFilter(field_name='auth_user')
 
-    model = Contract
-    fields = ["pk", "status", "account", "auth_user"]
+    class Meta:
+        model = Contract
+        fields = ["status", "account"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):
