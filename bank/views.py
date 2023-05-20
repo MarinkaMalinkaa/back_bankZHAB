@@ -27,9 +27,14 @@ def my_view(request):
     id_card = request.GET.get('id_card')
     number_card = request.GET.get('number_card')
     cvc = request.GET.get('cvc')
-    pin = request.GET.get('pin')
     contract_id = request.GET.get('contract_id')
 
+    user_online = is_user_online(request)
+    print(user_online)
+    if user_online:
+        pin = 0
+    else:
+        pin = 1
     # Создаем объект запроса и заполняем данными
     my_request = MyRequest(
         id_card=int(id_card),
@@ -52,12 +57,7 @@ def my_view(request):
             'pin': response.pin,
             'contract_id': response.contract_id,
         }
-        user_online = is_user_online(request)
 
-        if user_online:
-            message = str(my_response)
-            result = send_email(message, count=0)
-            return HttpResponse(result)
         # Возвращаем ответ в виде JSON
         return JsonResponse(my_response)
     except grpc.RpcError as e:
@@ -77,29 +77,9 @@ def is_user_online(request):
         last_activity = datetime.fromtimestamp(float(last_activity_str))
         time_since_last_activity = (datetime.now() - last_activity).total_seconds()
         if time_since_last_activity <= 300:
-            return False
-    return True
+            return True
+    return False
 
-def send_email(message, count):
-    sender = "alexorange707@gmail.com"
-    password = "jdnpdzqcngqvyruu"
-
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(sender, password)
-        msg = MIMEText(message)
-        msg["Subject"] = "Уведомление администратору!"
-        server.sendmail(sender, sender, msg.as_string())
-
-        # server.sendmail(sender, sender, f"Subject: CLICK ME PLEASE!\n{message}")
-        print("Сообщение доставлено!")
-        # Возвращаем сообщение в виде HTTP Response
-        return HttpResponse("Сообщение доставлено!")
-    except Exception as _ex:
-        print(f"{_ex}\nCheck your login or password please!")
-        # Возвращаем сообщение об ошибке в виде HTTP Response
-        return HttpResponse(f"{_ex}\nCheck your login or password please!")
 
 
 session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
