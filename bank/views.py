@@ -145,7 +145,7 @@ def GetRandomCard(request):
         random_num_card = randint(2023000000000000, 2023999999999999)
         if not Card.objects.filter(number_card=random_num_card):
             break
-    return HttpResponse("card_num = {}".format(random_num_card))
+    return HttpResponse(format(random_num_card))
 
 
 def GetRandomAccount(request):
@@ -162,12 +162,12 @@ def GetRandomAccount(request):
 
 def GetRandomCVC(request):
     random_cvc = randint(111, 999)
-    return HttpResponse('cvc = {}'.format(random_cvc))
+    return HttpResponse(format(random_cvc))
 
 
 def GetRandomPin(request):
     random_pin = randint(1111, 9999)
-    return HttpResponse('pin = {}'.format(random_pin))
+    return HttpResponse(format(random_pin))
 
 
 def auth_view(request):
